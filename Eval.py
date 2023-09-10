@@ -36,8 +36,10 @@ os.makedirs(visuals, exist_ok=True)
 
 modelSaveLoc = 'model/real_world_model.t7'
 
-data_root = '/home/pdas/Experiments/TrimBot/test_around_garden/uvc_camera_cam_0/'
-query_fmt = 'png'
+# data_root = 'C:/Users/yanbo/Pictures/test/'
+# data_root = "D:\PRJ\Traditional_NST\style\\"
+data_root = "C:/Users/yanbo/Documents/style_transfer/content/"
+query_fmt = 'jpg'
 
 batch_size = 1
 nthreads = 4
@@ -55,9 +57,13 @@ net = DecScaleClampedIllumEdgeGuidedNetworkBatchNorm().to(device)
 net, _, _ = support.loadModels(net, modelSaveLoc)
 net.to(device)
 print(done)
-
 def readFile(name):
     im = imageio.imread(name)
+    
+    # Ensure the image is only RGB (3 channels)
+    if im.shape[-1] == 4:
+        im = im[:, :, :3]
+
     rgb = im.astype(np.float32)
     rgb[np.isnan(rgb)] = 0
     rgb = cv2.resize(rgb, (256, 256))
@@ -74,7 +80,10 @@ def Eval(net):
 
     for data in tqdm(files):
 
-        data = data.split('/')[-1].split('.')[0]
+        data = data.split('\\')[-1].split('.')[0]
+        print("data: ", data)
+        print("Attempted path: ", data_root + data + '.%s' % query_fmt)
+
         img = readFile(data_root + data + '.%s' % query_fmt)
         rgb = Variable(torch.from_numpy(img).float()).to(device)
         rgb = rgb.unsqueeze(0)

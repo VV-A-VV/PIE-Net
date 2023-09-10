@@ -3,7 +3,7 @@ import imageio
 import numpy as np
 import torch
 import torch.nn as nn
-
+import cv2
 
 class mor_utils:
 
@@ -153,4 +153,6 @@ class mor_utils:
                 pred = (pred / pred.max()) * 255
                 pred = pred.transpose((1, 2, 0))
                 pred = pred.astype(np.uint8)
-                imageio.imwrite((vis + '/%s_%s.png') % (filename, k), pred)
+                # imageio.imwrite((vis + '/%s_%s.png') % (filename, k), pred)
+                cv2.imwrite((vis + '/%s_%s.png') % (filename, k), pred)
+
